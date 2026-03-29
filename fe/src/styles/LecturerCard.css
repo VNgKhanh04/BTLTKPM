@@ -1,0 +1,200 @@
+/* Styles cho card giảng viên */
+/* Thành viên 3 */
+
+.lecturer-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.lecturer-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.lecturer-card-full {
+  opacity: 0.7;
+  background-color: #f8f9fa;
+}
+
+/* Header */
+.lecturer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.lecturer-name {
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.lecturer-code {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+/* Body */
+.lecturer-card-body {
+  margin-bottom: 15px;
+}
+
+.lecturer-info-row {
+  display: flex;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.lecturer-label {
+  color: #6c757d;
+  font-weight: 500;
+  min-width: 80px;
+  margin-right: 10px;
+}
+
+.lecturer-value {
+  color: #495057;
+  flex: 1;
+}
+
+.lecturer-specialization {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e9ecef;
+}
+
+.lecturer-specialization .lecturer-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.lecturer-specialization .lecturer-value {
+  color: #495057;
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+/* Quota Section */
+.lecturer-quota {
+  margin-top: 15px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.quota-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.quota-label {
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.quota-value {
+  color: #495057;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.quota-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.quota-available {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.quota-full {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.quota-icon {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Footer */
+.lecturer-card-footer {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-select-lecturer {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-select-lecturer:hover:not(.btn-disabled) {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-disabled:hover {
+  background-color: #6c757d;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lecturer-card {
+    padding: 15px;
+  }
+
+  .lecturer-name {
+    font-size: 16px;
+  }
+
+  .lecturer-info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .lecturer-label {
+    min-width: auto;
+  }
+}

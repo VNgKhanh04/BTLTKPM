@@ -1,0 +1,62 @@
+/* Styles cho thanh tìm kiếm */
+/* Thành viên 1: Màn hình danh sách đề tài và tìm kiếm */
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.btn-clear {
+  position: absolute;
+  right: 120px;
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 12px;
+}
+
+.btn-clear:hover {
+  color: #666;
+}
+
+.btn-search {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-search:hover {
+  background-color: #1565c0;
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    flex-direction: column;
+  }
+  
+  .btn-clear {
+    right: 15px;
+  }
+}

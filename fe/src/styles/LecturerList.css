@@ -1,0 +1,174 @@
+/* Styles cho danh sách giảng viên hướng dẫn */
+/* Thành viên 3 */
+
+.lecturer-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.lecturer-list-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.lecturer-list-header h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 28px;
+}
+
+.group-info {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.group-info p {
+  margin: 5px 0;
+  color: #495057;
+}
+
+.group-info strong {
+  color: #2c3e50;
+  margin-right: 8px;
+}
+
+/* Search Section */
+.lecturer-search-section {
+  margin-bottom: 30px;
+}
+
+.lecturer-search-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lecturer-search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 16px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.lecturer-search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.lecturer-search-button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.lecturer-search-button:hover {
+  background-color: #0056b3;
+}
+
+/* Content */
+.lecturer-list-content {
+  margin-bottom: 30px;
+}
+
+.lecturer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.no-lecturers {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.no-lecturers p {
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Actions */
+.lecturer-list-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-back {
+  padding: 12px 24px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+  background-color: #5a6268;
+}
+
+/* Loading & Error States */
+.lecturer-list-loading,
+.lecturer-list-error {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 16px;
+}
+
+.lecturer-list-loading {
+  color: #007bff;
+}
+
+.lecturer-list-error {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lecturer-list-container {
+    padding: 15px;
+  }
+
+  .lecturer-list-header h2 {
+    font-size: 24px;
+  }
+
+  .lecturer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lecturer-search-form {
+    flex-direction: column;
+  }
+
+  .lecturer-search-input {
+    width: 100%;
+  }
+
+  .lecturer-search-button {
+    width: 100%;
+  }
+}

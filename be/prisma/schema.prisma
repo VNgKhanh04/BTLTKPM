@@ -1,0 +1,465 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// 1. Bảng VaiTro
+model VaiTro {
+  vai_tro_id     Int        @id @default(autoincrement())
+  ten_vai_tro    String     @unique @db.VarChar(50)
+  mo_ta          String?    @db.VarChar(255)
+  trang_thai     Int        @default(1) @db.SmallInt
+  ngay_tao       DateTime   @default(now())
+  ngay_cap_nhat  DateTime   @updatedAt
+  
+  TaiKhoan       TaiKhoan[]
+
+  @@map("vai_tro")
+}
+
+// 2. Bảng TaiKhoan
+model TaiKhoan {
+  tai_khoan_id            Int       @id @default(autoincrement())
+  ten_dang_nhap           String    @unique @db.VarChar(50)
+  mat_khau_hash           String    @db.VarChar(255)
+  vai_tro_id              Int
+  nguoi_dung_id           Int
+  loai_nguoi_dung         String    @db.VarChar(20)
+  trang_thai              Int       @default(1) @db.SmallInt
+  so_lan_dang_nhap_sai    Int       @default(0)
+  khoa_den                DateTime?
+  lan_dang_nhap_cuoi      DateTime?
+  ngay_tao                DateTime  @default(now())
+  ngay_cap_nhat           DateTime  @updatedAt
+  
+  VaiTro                  VaiTro    @relation(fields: [vai_tro_id], references: [vai_tro_id])
+
+  @@map("tai_khoan")
+}
+
+// 3. Bảng Khoa
+model Khoa {
+  khoa_id        Int         @id @default(autoincrement())
+  ma_khoa        String      @unique @db.VarChar(20)
+  ten_khoa       String      @db.VarChar(150)
+  email_lien_he  String?     @db.VarChar(100)
+  so_dien_thoai  String?     @db.VarChar(15)
+  trang_thai     Int         @default(1) @db.SmallInt
+  ngay_tao       DateTime    @default(now())
+  ngay_cap_nhat  DateTime    @updatedAt
+  
+  SinhVien       SinhVien[]
+  GiangVien      GiangVien[]
+
+  @@map("khoa")
+}
+
+// 4. Bảng SinhVien
+model SinhVien {
+  sinh_vien_id   Int              @id @default(autoincrement())
+  ma_sinh_vien   String           @unique @db.VarChar(20)
+  ho_ten         String           @db.VarChar(100)
+  ngay_sinh      DateTime?        @db.Date
+  gioi_tinh      Int?             @db.SmallInt
+  email          String           @unique @db.VarChar(100)
+  so_dien_thoai  String?          @db.VarChar(15)
+  khoa_id        Int
+  lop            String?          @db.VarChar(30)
+  khoa_hoc       String?          @db.VarChar(20)
+  trang_thai     Int              @default(1) @db.SmallInt
+  ngay_tao       DateTime         @default(now())
+  ngay_cap_nhat  DateTime         @updatedAt
+  
+  Khoa           Khoa             @relation(fields: [khoa_id], references: [khoa_id])
+  NhomNghienCuu  NhomNghienCuu[]
+  ThanhVienNhom  ThanhVienNhom[]
+
+  @@map("sinh_vien")
+}
+
+// 5. Bảng GiangVien
+model GiangVien {
+  giang_vien_id              Int                   @id @default(autoincrement())
+  ma_giang_vien              String                @unique @db.VarChar(20)
+  ho_ten                     String                @db.VarChar(100)
+  email                      String                @unique @db.VarChar(100)
+  so_dien_thoai              String?               @db.VarChar(15)
+  khoa_id                    Int
+  chuyen_mon                 String?               @db.VarChar(255)
+  so_luong_huong_dan_toi_da  Int                   @default(0)
+  trang_thai                 Int                   @default(1) @db.SmallInt
+  ngay_tao                   DateTime              @default(now())
+  ngay_cap_nhat              DateTime              @updatedAt
+  
+  Khoa                       Khoa                  @relation(fields: [khoa_id], references: [khoa_id])
+  DeTaiNghienCuu             DeTaiNghienCuu[]
+  NhomNghienCuu              NhomNghienCuu[]
+  ThanhVienHoiDong           ThanhVienHoiDong[]
+  DanhGiaChamDiem            DanhGiaChamDiem[]
+
+  @@map("giang_vien")
+}
+
+// 6. Bảng LinhVucNghienCuu
+model LinhVucNghienCuu {
+  linh_vuc_id    Int              @id @default(autoincrement())
+  ma_linh_vuc    String           @unique @db.VarChar(20)
+  ten_linh_vuc   String           @db.VarChar(150)
+  mo_ta          String?          @db.Text
+  trang_thai     Int              @default(1) @db.SmallInt
+  ngay_tao       DateTime         @default(now())
+  ngay_cap_nhat  DateTime         @updatedAt
+  
+  DeTaiNghienCuu DeTaiNghienCuu[]
+  HoSoDangKyDeTaiDeXuat HoSoDangKyDeTai[] @relation("HoSoDangKyDeTai_LinhVucDeXuat")
+
+  @@map("linh_vuc_nghien_cuu")
+}
+
+// 7. Bảng DeTaiNghienCuu
+model DeTaiNghienCuu {
+  de_tai_id                  Int                   @id @default(autoincrement())
+  ma_de_tai                  String                @unique @db.VarChar(30)
+  ten_de_tai                 String                @db.VarChar(255)
+  linh_vuc_id                Int
+  mo_ta                      String?               @db.Text
+  muc_tieu                   String?               @db.Text
+  yeu_cau                    String?               @db.Text
+  so_luong_thanh_vien_toi_da Int                   @default(5)
+  giang_vien_huong_dan_id    Int?
+  trang_thai                 String                @default("MO_DANG_KY") @db.VarChar(30)
+  nam_hoc                    String?               @db.VarChar(20)
+  hoc_ky                     String?               @db.VarChar(10)
+  ngay_tao                   DateTime              @default(now())
+  ngay_cap_nhat              DateTime              @updatedAt
+  
+  LinhVucNghienCuu           LinhVucNghienCuu      @relation(fields: [linh_vuc_id], references: [linh_vuc_id])
+  GiangVien                  GiangVien?            @relation(fields: [giang_vien_huong_dan_id], references: [giang_vien_id])
+  NhomNghienCuu              NhomNghienCuu[]
+  HoSoDangKyDeTai            HoSoDangKyDeTai[]
+  DeCuong                    DeCuong[]
+  BaoCaoTienDo               BaoCaoTienDo[]
+  BaoCaoCuoiCung             BaoCaoCuoiCung[]
+  LichBaoVe                  LichBaoVe[]
+  DanhGiaChamDiem            DanhGiaChamDiem[]
+
+  @@map("de_tai_nghien_cuu")
+}
+
+// 8. Bảng NhomNghienCuu
+model NhomNghienCuu {
+  nhom_id                 Int                   @id @default(autoincrement())
+  ma_nhom                 String                @unique @db.VarChar(30)
+  ten_nhom                String                @db.VarChar(150)
+  truong_nhom_id          Int
+  de_tai_id               Int?
+  loai_dang_ky            String                @default("DE_TAI_CO_SAN") @db.VarChar(30)
+  giang_vien_huong_dan_id Int?
+  so_luong_thanh_vien     Int                   @default(1)
+  trang_thai              String                @default("CHO_DUYET") @db.VarChar(30)
+  ngay_tao                DateTime              @default(now())
+  ngay_cap_nhat           DateTime              @updatedAt
+  
+  SinhVien                SinhVien              @relation(fields: [truong_nhom_id], references: [sinh_vien_id])
+  DeTaiNghienCuu          DeTaiNghienCuu?       @relation(fields: [de_tai_id], references: [de_tai_id])
+  GiangVien               GiangVien?            @relation(fields: [giang_vien_huong_dan_id], references: [giang_vien_id])
+  ThanhVienNhom           ThanhVienNhom[]
+  HoSoDangKyDeTai         HoSoDangKyDeTai[]
+  DeCuong                 DeCuong[]
+  BaoCaoTienDo            BaoCaoTienDo[]
+  BaoCaoCuoiCung          BaoCaoCuoiCung[]
+  LichBaoVe               LichBaoVe[]
+
+  @@map("nhom_nghien_cuu")
+}
+
+// 9. Bảng ThanhVienNhom
+model ThanhVienNhom {
+  thanh_vien_nhom_id  Int           @id @default(autoincrement())
+  nhom_id             Int
+  sinh_vien_id        Int
+  vai_tro_trong_nhom  String        @default("THANH_VIEN") @db.VarChar(30)
+  ngay_tham_gia       DateTime      @default(now())
+  trang_thai          Int           @default(1) @db.SmallInt
+  
+  NhomNghienCuu       NhomNghienCuu @relation(fields: [nhom_id], references: [nhom_id])
+  SinhVien            SinhVien      @relation(fields: [sinh_vien_id], references: [sinh_vien_id])
+
+  @@unique([nhom_id, sinh_vien_id])
+  @@map("thanh_vien_nhom")
+}
+
+// 10. Bảng HoSoDangKyDeTai
+model HoSoDangKyDeTai {
+  ho_so_id         Int              @id @default(autoincrement())
+  nhom_id          Int
+  de_tai_id        Int?
+  loai_dang_ky     String           @default("DE_TAI_CO_SAN") @db.VarChar(30)
+  ngay_dang_ky     DateTime         @default(now())
+  ly_do_chon_de_tai String?         @db.Text
+  ten_de_tai_de_xuat String?        @db.VarChar(255)
+  linh_vuc_de_xuat_id Int?
+  mo_ta_de_xuat    String?          @db.Text
+  muc_tieu_de_xuat String?          @db.Text
+  yeu_cau_de_xuat  String?          @db.Text
+  trang_thai       String           @default("CHO_PHE_DUYET") @db.VarChar(30)
+  ghi_chu          String?          @db.Text
+  nguoi_tao_id     Int?
+  ngay_tao         DateTime         @default(now())
+  ngay_cap_nhat    DateTime         @updatedAt
+  
+  NhomNghienCuu    NhomNghienCuu    @relation(fields: [nhom_id], references: [nhom_id])
+  DeTaiNghienCuu   DeTaiNghienCuu?  @relation(fields: [de_tai_id], references: [de_tai_id])
+  LinhVucDeXuat    LinhVucNghienCuu? @relation("HoSoDangKyDeTai_LinhVucDeXuat", fields: [linh_vuc_de_xuat_id], references: [linh_vuc_id])
+  PheDuyetDeTai    PheDuyetDeTai[]
+
+  @@map("ho_so_dang_ky_de_tai")
+}
+
+// 11. Bảng PheDuyetDeTai
+model PheDuyetDeTai {
+  phe_duyet_id      Int               @id @default(autoincrement())
+  ho_so_id          Int
+  nguoi_duyet_id    Int
+  loai_nguoi_duyet  String            @db.VarChar(30)
+  ket_qua           String            @db.VarChar(30)
+  nhan_xet          String?           @db.Text
+  thoi_gian_duyet   DateTime          @default(now())
+  
+  HoSoDangKyDeTai   HoSoDangKyDeTai   @relation(fields: [ho_so_id], references: [ho_so_id])
+
+  @@map("phe_duyet_de_tai")
+}
+
+// 12. Bảng DeCuong
+model DeCuong {
+  de_cuong_id        Int                 @id @default(autoincrement())
+  de_tai_id          Int
+  nhom_id            Int
+  tieu_de            String              @db.VarChar(255)
+  muc_tieu           String?             @db.Text
+  noi_dung           String?             @db.Text
+  ke_hoach_thuc_hien String?             @db.Text
+  trang_thai         String              @default("BAN_NHAP") @db.VarChar(30)
+  phien_ban_hien_tai Int                 @default(1)
+  han_nop            DateTime?
+  ngay_tao           DateTime            @default(now())
+  ngay_cap_nhat      DateTime            @updatedAt
+  
+  DeTaiNghienCuu     DeTaiNghienCuu      @relation(fields: [de_tai_id], references: [de_tai_id])
+  NhomNghienCuu      NhomNghienCuu       @relation(fields: [nhom_id], references: [nhom_id])
+  PhienBanDeCuong    PhienBanDeCuong[]
+  NhanXetDeCuong     NhanXetDeCuong[]
+
+  @@map("de_cuong")
+}
+
+// 13. Bảng PhienBanDeCuong
+model PhienBanDeCuong {
+  phien_ban_id     Int          @id @default(autoincrement())
+  de_cuong_id      Int
+  so_phien_ban     Int
+  tep_dinh_kem_id  Int?
+  ghi_chu_thay_doi String?      @db.Text
+  nguoi_nop_id     Int
+  ngay_nop         DateTime     @default(now())
+  
+  DeCuong          DeCuong      @relation(fields: [de_cuong_id], references: [de_cuong_id])
+  TepDinhKem       TepDinhKem?  @relation(fields: [tep_dinh_kem_id], references: [tep_dinh_kem_id])
+
+  @@unique([de_cuong_id, so_phien_ban])
+  @@map("phien_ban_de_cuong")
+}
+
+// 14. Bảng NhanXetDeCuong
+model NhanXetDeCuong {
+  nhan_xet_de_cuong_id Int      @id @default(autoincrement())
+  de_cuong_id          Int
+  nguoi_nhan_xet_id    Int
+  loai_nguoi_nhan_xet  String   @db.VarChar(30)
+  noi_dung_nhan_xet    String   @db.Text
+  ket_qua              String   @db.VarChar(30)
+  ngay_nhan_xet        DateTime @default(now())
+  
+  DeCuong              DeCuong  @relation(fields: [de_cuong_id], references: [de_cuong_id])
+
+  @@map("nhan_xet_de_cuong")
+}
+
+// 15. Bảng BaoCaoTienDo
+model BaoCaoTienDo {
+  bao_cao_tien_do_id Int              @id @default(autoincrement())
+  de_tai_id          Int
+  nhom_id            Int
+  giai_doan          String           @db.VarChar(50)
+  tieu_de            String           @db.VarChar(255)
+  noi_dung_tom_tat   String?          @db.Text
+  ty_le_hoan_thanh   Decimal?         @db.Decimal(5, 2)
+  han_nop            DateTime?
+  ngay_nop           DateTime?
+  trang_thai         String           @default("BAN_NHAP") @db.VarChar(30)
+  tep_dinh_kem_id    Int?
+  ngay_tao           DateTime         @default(now())
+  ngay_cap_nhat      DateTime         @updatedAt
+  
+  DeTaiNghienCuu     DeTaiNghienCuu   @relation(fields: [de_tai_id], references: [de_tai_id])
+  NhomNghienCuu      NhomNghienCuu    @relation(fields: [nhom_id], references: [nhom_id])
+  TepDinhKem         TepDinhKem?      @relation(fields: [tep_dinh_kem_id], references: [tep_dinh_kem_id])
+  NhanXetTienDo      NhanXetTienDo[]
+
+  @@map("bao_cao_tien_do")
+}
+
+// 16. Bảng NhanXetTienDo
+model NhanXetTienDo {
+  nhan_xet_tien_do_id Int            @id @default(autoincrement())
+  bao_cao_tien_do_id  Int
+  nguoi_nhan_xet_id   Int
+  loai_nguoi_nhan_xet String         @db.VarChar(30)
+  noi_dung_nhan_xet   String         @db.Text
+  danh_gia            String         @db.VarChar(30)
+  ngay_nhan_xet       DateTime       @default(now())
+  
+  BaoCaoTienDo        BaoCaoTienDo   @relation(fields: [bao_cao_tien_do_id], references: [bao_cao_tien_do_id])
+
+  @@map("nhan_xet_tien_do")
+}
+
+// 17. Bảng BaoCaoCuoiCung
+model BaoCaoCuoiCung {
+  bao_cao_cuoi_cung_id Int            @id @default(autoincrement())
+  de_tai_id            Int
+  nhom_id              Int
+  tieu_de              String         @db.VarChar(255)
+  tom_tat              String?        @db.Text
+  tep_dinh_kem_id      Int?
+  ngay_nop             DateTime       @default(now())
+  du_dieu_kien_bao_ve  Boolean        @default(false)
+  nhan_xet_gvhd        String?        @db.Text
+  trang_thai           String         @default("DA_NOP") @db.VarChar(30)
+  
+  DeTaiNghienCuu       DeTaiNghienCuu @relation(fields: [de_tai_id], references: [de_tai_id])
+  NhomNghienCuu        NhomNghienCuu  @relation(fields: [nhom_id], references: [nhom_id])
+  TepDinhKem           TepDinhKem?    @relation(fields: [tep_dinh_kem_id], references: [tep_dinh_kem_id])
+
+  @@map("bao_cao_cuoi_cung")
+}
+
+// 18. Bảng HoiDongKhoaHoc
+model HoiDongKhoaHoc {
+  hoi_dong_id      Int                   @id @default(autoincrement())
+  ma_hoi_dong      String                @unique @db.VarChar(30)
+  ten_hoi_dong     String                @db.VarChar(255)
+  cap_hoi_dong     String                @db.VarChar(30)
+  nam_hoc          String?               @db.VarChar(20)
+  mo_ta            String?               @db.Text
+  trang_thai       Int                   @default(1) @db.SmallInt
+  ngay_tao         DateTime              @default(now())
+  ngay_cap_nhat    DateTime              @updatedAt
+  
+  ThanhVienHoiDong ThanhVienHoiDong[]
+  LichBaoVe        LichBaoVe[]
+  DanhGiaChamDiem  DanhGiaChamDiem[]
+
+  @@map("hoi_dong_khoa_hoc")
+}
+
+// 19. Bảng ThanhVienHoiDong
+model ThanhVienHoiDong {
+  thanh_vien_hoi_dong_id Int              @id @default(autoincrement())
+  hoi_dong_id            Int
+  giang_vien_id          Int
+  vai_tro_trong_hoi_dong String           @db.VarChar(30)
+  trang_thai             Int              @default(1) @db.SmallInt
+  
+  HoiDongKhoaHoc         HoiDongKhoaHoc   @relation(fields: [hoi_dong_id], references: [hoi_dong_id])
+  GiangVien              GiangVien        @relation(fields: [giang_vien_id], references: [giang_vien_id])
+
+  @@unique([hoi_dong_id, giang_vien_id])
+  @@map("thanh_vien_hoi_dong")
+}
+
+// 20. Bảng LichBaoVe
+model LichBaoVe {
+  lich_bao_ve_id     Int                @id @default(autoincrement())
+  de_tai_id          Int
+  nhom_id            Int
+  hoi_dong_id        Int
+  thoi_gian_bat_dau  DateTime
+  thoi_gian_ket_thuc DateTime
+  dia_diem           String?            @db.VarChar(255)
+  trang_thai         String             @default("DU_KIEN") @db.VarChar(30)
+  ghi_chu            String?            @db.Text
+  ngay_tao           DateTime           @default(now())
+  
+  DeTaiNghienCuu     DeTaiNghienCuu     @relation(fields: [de_tai_id], references: [de_tai_id])
+  NhomNghienCuu      NhomNghienCuu      @relation(fields: [nhom_id], references: [nhom_id])
+  HoiDongKhoaHoc     HoiDongKhoaHoc     @relation(fields: [hoi_dong_id], references: [hoi_dong_id])
+  DanhGiaChamDiem    DanhGiaChamDiem[]
+
+  @@map("lich_bao_ve")
+}
+
+// 21. Bảng DanhGiaChamDiem
+model DanhGiaChamDiem {
+  danh_gia_id        Int              @id @default(autoincrement())
+  lich_bao_ve_id     Int
+  de_tai_id          Int
+  hoi_dong_id        Int
+  nguoi_cham_id      Int?
+  diem_noi_dung      Decimal?         @db.Decimal(4, 2)
+  diem_phuong_phap   Decimal?         @db.Decimal(4, 2)
+  diem_trinh_bay     Decimal?         @db.Decimal(4, 2)
+  diem_tinh_ung_dung Decimal?         @db.Decimal(4, 2)
+  diem_tong          Decimal?         @db.Decimal(4, 2)
+  ket_luan           String           @db.VarChar(30)
+  nhan_xet           String?          @db.Text
+  ngay_cham          DateTime         @default(now())
+  
+  LichBaoVe          LichBaoVe        @relation(fields: [lich_bao_ve_id], references: [lich_bao_ve_id])
+  DeTaiNghienCuu     DeTaiNghienCuu   @relation(fields: [de_tai_id], references: [de_tai_id])
+  HoiDongKhoaHoc     HoiDongKhoaHoc   @relation(fields: [hoi_dong_id], references: [hoi_dong_id])
+  GiangVien          GiangVien?       @relation(fields: [nguoi_cham_id], references: [giang_vien_id])
+
+  @@map("danh_gia_cham_diem")
+}
+
+// 22. Bảng ThongBao
+model ThongBao {
+  thong_bao_id     Int      @id @default(autoincrement())
+  tieu_de          String   @db.VarChar(255)
+  noi_dung         String   @db.Text
+  nguoi_nhan_id    Int
+  loai_nguoi_nhan  String   @db.VarChar(30)
+  loai_thong_bao   String   @db.VarChar(50)
+  da_doc           Boolean  @default(false)
+  thoi_gian_gui    DateTime @default(now())
+  duong_dan        String?  @db.VarChar(255)
+
+  @@map("thong_bao")
+}
+
+// 23. Bảng TepDinhKem
+model TepDinhKem {
+  tep_dinh_kem_id  Int                 @id @default(autoincrement())
+  ten_tep_goc      String              @db.VarChar(255)
+  ten_tep_luu      String              @db.VarChar(255)
+  duong_dan        String              @db.VarChar(500)
+  loai_tep         String?             @db.VarChar(100)
+  kich_thuoc_byte  BigInt?
+  nguoi_tai_len_id Int
+  ngay_tai_len     DateTime            @default(now())
+  mo_ta            String?             @db.VarChar(255)
+  
+  PhienBanDeCuong  PhienBanDeCuong[]
+  BaoCaoTienDo     BaoCaoTienDo[]
+  BaoCaoCuoiCung   BaoCaoCuoiCung[]
+
+  @@map("tep_dinh_kem")
+}

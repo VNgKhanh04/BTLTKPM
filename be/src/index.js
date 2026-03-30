@@ -6,6 +6,14 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
+function getDatabaseHost() {
+  try {
+    return new URL(process.env.DATABASE_URL).hostname;
+  } catch {
+    return 'unknown-host';
+  }
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -85,13 +93,28 @@ const PORT = process.env.PORT || 3000;
 async function main() {
   try {
     await prisma.$connect();
-    console.log('✅ Đã kết nối PostgreSQL (Supabase) thành công');
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('✅ Đã kết nối PostgreSQL thành công');
     
     app.listen(PORT, () => {
       console.log(`🚀 Server đang chạy tại port ${PORT}`);
       console.log(`📚 API Documentation: http://localhost:${PORT}`);
     });
   } catch (err) {
+    const databaseHost = getDatabaseHost();
+    const errorMessage = err instanceof Error ? err.message : '';
+    const isDatabaseReachabilityError = err && (
+      err.code === 'P1001' ||
+      err.code === 'P2010' ||
+      err.code === 'ENOTFOUND' ||
+      err.errno === 'ENOTFOUND' ||
+      errorMessage.includes("Can't reach database server")
+    );
+
+    if (isDatabaseReachabilityError) {
+      console.error(`❌ Không thể kết nối database tại host ${databaseHost}. Kiểm tra lại DATABASE_URL trong file .env và xác nhận connection string hiện tại còn hiệu lực.`);
+    }
+
     console.error('❌ Lỗi kết nối PostgreSQL:', err);
     process.exit(1);
   }

@@ -1,12 +1,9 @@
-// Repository xử lý truy vấn database cho hồ sơ đăng ký
-// Data Layer - Thành viên 4
-
 const prisma = require('../config/prisma');
 
 class HoSoDangKyRepository {
   async findMany(filters) {
-    const { studentId, nhomId, trangThai } = filters;
-    
+    const { studentId, nhomId, lecturerId, trangThai } = filters;
+
     const where = {};
 
     if (nhomId) {
@@ -15,9 +12,17 @@ class HoSoDangKyRepository {
 
     if (studentId) {
       where.NhomNghienCuu = {
+        ...(where.NhomNghienCuu || {}),
         ThanhVienNhom: {
           some: { sinh_vien_id: studentId }
         }
+      };
+    }
+
+    if (lecturerId) {
+      where.NhomNghienCuu = {
+        ...(where.NhomNghienCuu || {}),
+        giang_vien_huong_dan_id: lecturerId
       };
     }
 
@@ -25,12 +30,13 @@ class HoSoDangKyRepository {
       where.trang_thai = trangThai;
     }
 
-    return await prisma.hoSoDangKyDeTai.findMany({
+    return prisma.hoSoDangKyDeTai.findMany({
       where,
       include: {
         NhomNghienCuu: {
           include: {
             SinhVien: true,
+            GiangVien: true,
             ThanhVienNhom: {
               include: {
                 SinhVien: true
@@ -51,7 +57,7 @@ class HoSoDangKyRepository {
   }
 
   async findById(hoSoId) {
-    return await prisma.hoSoDangKyDeTai.findUnique({
+    return prisma.hoSoDangKyDeTai.findUnique({
       where: { ho_so_id: hoSoId },
       include: {
         NhomNghienCuu: {
@@ -86,7 +92,7 @@ class HoSoDangKyRepository {
   }
 
   async findByTopic(deTaiId) {
-    return await prisma.hoSoDangKyDeTai.findMany({
+    return prisma.hoSoDangKyDeTai.findMany({
       where: {
         de_tai_id: deTaiId,
         trang_thai: { not: 'TU_CHOI' }
@@ -105,7 +111,7 @@ class HoSoDangKyRepository {
   }
 
   async create(hoSoData) {
-    return await prisma.hoSoDangKyDeTai.create({
+    return prisma.hoSoDangKyDeTai.create({
       data: hoSoData,
       include: {
         NhomNghienCuu: true,
@@ -116,14 +122,14 @@ class HoSoDangKyRepository {
   }
 
   async update(hoSoId, updateData) {
-    return await prisma.hoSoDangKyDeTai.update({
+    return prisma.hoSoDangKyDeTai.update({
       where: { ho_so_id: hoSoId },
       data: updateData
     });
   }
 
   async getApprovalHistory(hoSoId) {
-    return await prisma.pheDuyetDeTai.findMany({
+    return prisma.pheDuyetDeTai.findMany({
       where: { ho_so_id: hoSoId },
       orderBy: { thoi_gian_duyet: 'asc' }
     });

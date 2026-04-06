@@ -1,26 +1,40 @@
-// Routes cho hồ sơ đăng ký đề tài
-// Thành viên 4: Màn hình nộp hồ sơ đăng ký đề tài
-
 const express = require('express');
-const router = express.Router();
 const hoSoDangKyController = require('../controllers/hoSoDangKyController');
+const { authenticate, requireRoles } = require('../middlewares/auth');
 
-// POST /api/topic-registrations - Tạo hồ sơ đăng ký
+const router = express.Router();
+
 router.post('/', hoSoDangKyController.taoHoSoDangKy);
+router.post(
+  '/student',
+  authenticate,
+  requireRoles('SINH_VIEN'),
+  hoSoDangKyController.taoDangKyChoSinhVien
+);
 
-// GET /api/topic-registrations - Lấy danh sách hồ sơ
 router.get('/', hoSoDangKyController.getDanhSachHoSo);
+router.get(
+  '/my',
+  authenticate,
+  requireRoles('SINH_VIEN'),
+  hoSoDangKyController.getHoSoCuaToi
+);
+router.get(
+  '/assigned-to-me',
+  authenticate,
+  requireRoles('GIANG_VIEN'),
+  hoSoDangKyController.getHoSoChoGiangVien
+);
 
-// GET /api/topic-registrations/:id - Xem chi tiết hồ sơ
 router.get('/:id', hoSoDangKyController.getChiTietHoSo);
-
-// PUT /api/topic-registrations/:id - Cập nhật hồ sơ
 router.put('/:id', hoSoDangKyController.capNhatHoSo);
-
-// PATCH /api/topic-registrations/:id/submit - Xác nhận nộp hồ sơ
 router.patch('/:id/submit', hoSoDangKyController.xacNhanNopHoSo);
-
-// GET /api/topic-registrations/:id/timeline - Lấy timeline
+router.patch(
+  '/:id/review',
+  authenticate,
+  requireRoles('GIANG_VIEN'),
+  hoSoDangKyController.duyetHoSo
+);
 router.get('/:id/timeline', hoSoDangKyController.getTimeline);
 
 module.exports = router;

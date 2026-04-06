@@ -51,7 +51,7 @@ class GiangVienRepository {
     return await prisma.nhomNghienCuu.count({
       where: {
         giang_vien_huong_dan_id: giangVienId,
-        trang_thai: { in: ['CHO_DUYET', 'DANG_THUC_HIEN'] }
+        trang_thai: { in: ['CHO_DUYET', 'DA_DUYET', 'DANG_THUC_HIEN'] }
       }
     });
   }
